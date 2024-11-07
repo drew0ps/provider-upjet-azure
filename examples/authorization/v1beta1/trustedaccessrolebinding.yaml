@@ -1,0 +1,163 @@
+apiVersion: authorization.azure.upbound.io/v1beta1
+kind: TrustedAccessRoleBinding
+metadata:
+  annotations:
+    meta.upbound.io/example-id: authorization/v1beta1/trustedaccessrolebinding
+  labels:
+    testing.upbound.io/example-name: example-tarb
+  name: example-tarb
+spec:
+  forProvider:
+    kubernetesClusterIdSelector:
+      matchLabels:
+        testing.upbound.io/example-name: example-tarb
+    roles:
+      - "Reader"
+    sourceResourceIdSelector:
+      matchLabels:
+        testing.upbound.io/example-name: example-tarb
+
+---
+
+apiVersion: insights.azure.upbound.io/v1beta1
+kind: ApplicationInsights
+metadata:
+  annotations:
+    meta.upbound.io/example-id: authorization/v1beta1/trustedaccessrolebinding
+  labels:
+    testing.upbound.io/example-name: example-tarb
+  name: example-ai-tarb
+spec:
+  forProvider:
+    applicationType: web
+    location: West Europe
+    resourceGroupNameSelector:
+      matchLabels:
+        testing.upbound.io/example-name: example-tarb
+
+---
+
+apiVersion: keyvault.azure.upbound.io/v1beta2
+kind: Vault
+metadata:
+  annotations:
+    meta.upbound.io/example-id: authorization/v1beta1/trustedaccessrolebinding
+  labels:
+    testing.upbound.io/example-name: example-tarb
+  name: example-ai-v
+spec:
+  forProvider:
+    location: West Europe
+    resourceGroupNameSelector:
+      matchLabels:
+        testing.upbound.io/example-name: example-tarb
+    skuName: Standard
+    softDeleteRetentionDays: 8
+    tenantId: b9925bc4-8383-4c37-b9d2-fa456d1bb1c7
+
+---
+
+apiVersion: keyvault.azure.upbound.io/v1beta1
+kind: AccessPolicy
+metadata:
+  annotations:
+    meta.upbound.io/example-id: authorization/v1beta1/trustedaccessrolebinding
+  labels:
+    testing.upbound.io/example-name: example-tarb
+  name: example-tarb-ap
+spec:
+  forProvider:
+    keyPermissions:
+      - get
+      - list
+    keyVaultIdSelector:
+      matchLabels:
+        testing.upbound.io/example-name: example-tarb
+    objectId: ${data.azurerm_client_config.example.object_id}
+    tenantId: b9925bc4-8383-4c37-b9d2-fa456d1bb1c7
+---
+
+apiVersion: containerservice.azure.upbound.io/v1beta1
+kind: KubernetesCluster
+metadata:
+  annotations:
+    meta.upbound.io/example-id: authorization/v1beta1/trustedaccessrolebinding
+  labels:
+    testing.upbound.io/example-name: example-tarb
+  name: example-tarb-kc
+spec:
+  forProvider:
+    defaultNodePool:
+    - name: default
+      nodeCount: 1
+      vmSize: Standard_D2_v2
+      upgradeSettings:
+      - maxSurge: '10%'
+    dnsPrefix: exampleaks1
+    identity:
+    - type: SystemAssigned
+    location: North Europe
+    resourceGroupNameSelector:
+      matchLabels:
+        testing.upbound.io/example-name: example-tarb
+
+---
+
+apiVersion: machinelearningservices.azure.upbound.io/v1beta2
+kind: Workspace
+metadata:
+  annotations:
+    meta.upbound.io/example-id: authorization/v1beta1/trustedaccessrolebinding
+  labels:
+    testing.upbound.io/example-name: example-tarb
+  name: example-tarb-wp
+spec:
+  forProvider:
+    applicationInsightsIdSelector:
+      matchLabels:
+        testing.upbound.io/example-name: example-tarb
+    identity:
+      type: SystemAssigned  
+    keyVaultIdSelector:
+      matchLabels:
+        testing.upbound.io/example-name: example-tarb
+    location: West Europe
+    resourceGroupNameSelector:
+      matchLabels:
+        testing.upbound.io/example-name: example-tarb
+    storageAccountIdSelector:
+      matchLabels:
+        testing.upbound.io/example-name: example-tarb
+
+---
+
+apiVersion: azure.upbound.io/v1beta1
+kind: ResourceGroup
+metadata:
+  annotations:
+    meta.upbound.io/example-id: authorization/v1beta1/trustedaccessrolebinding
+  labels:
+    testing.upbound.io/example-name: example-tarb
+  name: example-tarb-rg
+spec:
+  forProvider:
+    location: West Europe
+
+---
+
+apiVersion: storage.azure.upbound.io/v1beta2
+kind: Account
+metadata:
+  annotations:
+    meta.upbound.io/example-id: authorization/v1beta1/trustedaccessrolebinding
+  labels:
+    testing.upbound.io/example-name: example-tarb
+  name: exampletarbac
+spec:
+  forProvider:
+    accountReplicationType: LRS
+    accountTier: Standard
+    location: West Europe
+    resourceGroupNameSelector:
+      matchLabels:
+        testing.upbound.io/example-name: example-tarb
